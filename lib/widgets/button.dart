@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/cupertino.dart';
+import 'package:habittracker/utilities/colors.dart';
 import 'package:sizer/sizer.dart';
 
 class Button extends StatelessWidget {
@@ -35,6 +36,9 @@ class Button extends StatelessWidget {
             leftIcon ?? const Text(''),
             Text(
               text,
+              style: const TextStyle(
+                color: AppColor.white,
+              ),
             ),
             rightIcon ?? const Text(''),
           ],

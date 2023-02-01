@@ -4,6 +4,7 @@ class AppColor {
   static const Color primary = Color(0xFF9777ff);
   static const Color background = Color(0xFFE1E9F1);
   static const Color cardbg = Color(0xFFE9F2F4);
+  static const Color border = Color(0xFFE5E5E5);
   static const Color text = Color(0xFF90A7AD);
   static const Color progresBar = Color(0xFFFF79C9);
   static const Color fb = Color(0xFF3E1B72);
