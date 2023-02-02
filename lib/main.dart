@@ -1,11 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:habittracker/screens/login_page.dart';
+import 'package:habittracker/screens/sign_up_page.dart';
+
 import 'package:habittracker/utilities/colors.dart';
-import 'package:habittracker/widgets/layout.dart';
+
 import 'package:sizer/sizer.dart';
 import 'package:flutter/services.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(const MyApp());
@@ -32,7 +41,10 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             backgroundColor: AppColor.background,
           ),
-          home: const Layout(),
+          home: LoginPage(),
+          routes: {
+            '/signup': (context) => SignUpPage(),
+          },
         );
       }),
     );

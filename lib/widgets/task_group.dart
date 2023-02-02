@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../utilities/colors.dart';
+import 'package:habittracker/utilities/colors.dart';
 
 class TaskGroupContainer extends StatelessWidget {
   final MaterialColor color;
