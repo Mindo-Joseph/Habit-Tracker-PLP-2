@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker_plp/helpers/create_habit.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+
+}
+class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
   static const List<Widget> _pages = <Widget>[
     Icon(Icons.home, size: 150),
     Icon(Icons.stacked_line_chart_outlined, size: 150),
@@ -10,6 +15,21 @@ class HomePage extends StatelessWidget {
     Icon(Icons.notifications, size: 150),
     Icon(Icons.settings, size: 150)
   ];
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CreateHabit(),
+        ),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +58,5 @@ class HomePage extends StatelessWidget {
 
     );
   }
-  void _onItemTapped(int index){
-    setState(()=>_selectedIndex=index);
 
-  }
 }
