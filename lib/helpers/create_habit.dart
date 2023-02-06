@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateHabit extends StatefulWidget{
   @override
@@ -9,6 +10,7 @@ class CreateHabit extends StatefulWidget{
 }
 
 class _CreateHabitState extends State<CreateHabit>{
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseDatabase database = FirebaseDatabase.instance;
   final _formKey = GlobalKey<FormState>();
   final _textController = TextEditingController();
@@ -35,10 +37,13 @@ class _CreateHabitState extends State<CreateHabit>{
               },
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: ()  {
                 if (_formKey.currentState!.validate()) {
+                  var user = _auth.currentUser;
+                  String userId = user!.uid;
                   database
                     .ref()
+                      .child("user_id: $userId")
                       .child("habits")
                       .push()
                       .set({
