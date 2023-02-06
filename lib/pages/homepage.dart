@@ -14,6 +14,7 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseDatabase database = FirebaseDatabase.instance;
   List<Habit> _habits = [];
+  final _textController = TextEditingController();
 
   @override
   void initState() {
@@ -90,7 +91,47 @@ class _HomePageState extends State<HomePage> {
                           IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
-                              // Edit habit code here
+                              // Show a dialog to get the new name for the habit
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Edit Habit"),
+                                    content: TextField(
+                                      controller: _textController,
+                                      decoration: InputDecoration(labelText: "Name"),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Save"),
+                                        onPressed: () {
+                                          var user = _auth.currentUser;
+                                          String userId = user!.uid;
+                                          // Update the habit in Firebase
+                                          FirebaseDatabase.instance
+                                              .ref()
+                                              .child("user_id: $userId")
+                                              .child("habits")
+                                              .child(_habits[index].id)
+                                              .update({
+                                            "name": _textController.text,
+                                          });
+
+                                          // Close the dialog
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("Cancel"),
+                                        onPressed: () {
+                                          // Close the dialog
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                           ),
                           IconButton(
