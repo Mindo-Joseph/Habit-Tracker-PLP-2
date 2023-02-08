@@ -17,8 +17,10 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseDatabase database = FirebaseDatabase.instance;
   List<Habit> _habits = [];
+  List<ToDoItem> _toDoItems = [];
   final _textController = TextEditingController();
   final _toDoItemController = TextEditingController();
+  final _dueDateController = TextEditingController();
 
   @override
   void initState() {
@@ -176,59 +178,90 @@ class _HomePageState extends State<HomePage> {
             ),
             Container(
               margin: EdgeInsets.only(top: 16),
-              child: Column(
-                children: [
-                  Text(
-                    "To-Do Lists",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    child: Text("Create To-Do"),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (builder){
-                          return AlertDialog(
-                            title: Text("Create To-Do"),
-                            content: TextField(
-                              controller: _toDoItemController,
-                              decoration: InputDecoration(labelText: "To-Do"),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text("Save"),
-                                onPressed: () {
-                                  var user = _auth.currentUser;
-                                  String userId = user!.uid;
-                                  FirebaseDatabase.instance
-                                      .ref()
-                                      .child("user_id: $userId")
-                                      .child("to-do_lists")
-                                      .push()
-                                      .set({
-                                    "item_name": _toDoItemController.text,
-                                  });
-                                  Navigator.of(context).pop();
+              child: SizedBox(
+                height: 100,
+                child: Column(
+                  children: [
+                    Text(
+                      "To-Do Lists",
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _toDoItems.length,
+                        itemBuilder: (context, index){
+                          return CheckboxListTile(value: _toDoItems[index].isChecked, onChanged: (value) {
+                            setState(() {
+                              _toDoItems[index].isChecked = value!;
+                            });
 
-                                },
-                              ),
-                              TextButton(
-                                child: Text("Cancel"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
+                          });
+                        },
+                      ),
 
-                                },
-                              )
-                            ],
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      child: Text("Create To-Do"),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (builder){
+                              return AlertDialog(
+                                title: Text("Create To-Do"),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextField(
+                                      controller: _toDoItemController,
+                                      decoration: InputDecoration(labelText: "Task"),
+                                    ),
+                                    SizedBox(height: 10),
+                                    TextField(
+                                      controller: _dueDateController,
+                                      decoration: InputDecoration(labelText: "Due Date"),
+                                      keyboardType: TextInputType.datetime,
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Save"),
+                                    onPressed: () {
+                                      var user = _auth.currentUser;
+                                      String userId = user!.uid;
+                                      FirebaseDatabase.instance
+                                          .ref()
+                                          .child("user_id: $userId")
+                                          .child("to-do_lists")
+                                          .push()
+                                          .set({
+                                        "item_name": _toDoItemController.text,
+                                        "due_date": _dueDateController.text,
+                                      });
+                                      Navigator.of(context).pop();
 
-                          );
-                        }
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      _toDoItemController.clear();
+                                      _dueDateController.clear();
+                                      Navigator.of(context).pop();
 
-                      );
-                    },
-                  )
-                ],
+                                    },
+                                  )
+                                ],
+
+                              );
+                            }
+
+                        );
+                      },
+                    )
+                  ],
+                )
               )
             )
 
@@ -307,4 +340,13 @@ class Habit {
   String toString() {
     return 'Habit{id: $id, name: $name, createdAt: $createdAt}, start_date: ${start_date}, end_date: ${end_date}, progress: $progress';
   }
+}
+
+
+class ToDoItem {
+  String itemName;
+  bool isChecked;
+  DateTime dueDate;
+
+  ToDoItem({required this.itemName, required this.isChecked, required this.dueDate});
 }
