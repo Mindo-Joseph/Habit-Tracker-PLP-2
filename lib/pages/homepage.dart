@@ -18,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   FirebaseDatabase database = FirebaseDatabase.instance;
   List<Habit> _habits = [];
   final _textController = TextEditingController();
+  final _toDoItemController = TextEditingController();
 
   @override
   void initState() {
@@ -77,95 +78,162 @@ class _HomePageState extends State<HomePage> {
     print("The habits are, ${_habits}");
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('Habits'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: _habits.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                title: Text(_habits[index].name),
-                trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      HabitProgressBar(
-                        startDate: _habits[index].start_date,
-                        endDate: _habits[index].end_date,
-                      ),
-                      Container(
-                        width: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                // Show a dialog to get the new name for the habit
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text("Edit Habit"),
-                                      content: TextField(
-                                        controller: _textController,
-                                        decoration:
-                                            InputDecoration(labelText: "Name"),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: Text("Save"),
-                                          onPressed: () {
-                                            var user = _auth.currentUser;
-                                            String userId = user!.uid;
-                                            // Update the habit in Firebase
-                                            FirebaseDatabase.instance
-                                                .ref()
-                                                .child("user_id: $userId")
-                                                .child("habits")
-                                                .child(_habits[index].id)
-                                                .update({
-                                              "name": _textController.text,
-                                            });
+        child: Column(
+          children: [
+            Expanded(
+                child:  ListView.builder(
+                  itemCount: _habits.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(_habits[index].name),
+                        trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              HabitProgressBar(
+                                startDate: _habits[index].start_date,
+                                endDate: _habits[index].end_date,
+                              ),
+                              Container(
+                                width: 100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        // Show a dialog to get the new name for the habit
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text("Edit Habit"),
+                                              content: TextField(
+                                                controller: _textController,
+                                                decoration:
+                                                InputDecoration(labelText: "Name"),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: Text("Save"),
+                                                  onPressed: () {
+                                                    var user = _auth.currentUser;
+                                                    String userId = user!.uid;
+                                                    // Update the habit in Firebase
+                                                    FirebaseDatabase.instance
+                                                        .ref()
+                                                        .child("user_id: $userId")
+                                                        .child("habits")
+                                                        .child(_habits[index].id)
+                                                        .update({
+                                                      "name": _textController.text,
+                                                    });
 
-                                            // Close the dialog
-                                            Navigator.of(context).pop();
+                                                    // Close the dialog
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text("Cancel"),
+                                                  onPressed: () {
+                                                    // Close the dialog
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
                                           },
-                                        ),
-                                        TextButton(
-                                          child: Text("Cancel"),
-                                          onPressed: () {
-                                            // Close the dialog
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                database
-                                    .ref()
-                                    .child("user_id: ${userId}")
-                                    .child("habits")
-                                    .child(_habits[index].id.toString())
-                                    .remove();
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        database
+                                            .ref()
+                                            .child("user_id: ${userId}")
+                                            .child("habits")
+                                            .child(_habits[index].id.toString())
+                                            .remove();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                    ]),
-              ),
-            );
-          },
+                            ]),
+                      ),
+                    );
+                  },
+                ),
+
+
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 16),
+              child: Column(
+                children: [
+                  Text(
+                    "To-Do Lists",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    child: Text("Create To-Do"),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (builder){
+                          return AlertDialog(
+                            title: Text("Create To-Do"),
+                            content: TextField(
+                              controller: _toDoItemController,
+                              decoration: InputDecoration(labelText: "To-Do"),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text("Save"),
+                                onPressed: () {
+                                  var user = _auth.currentUser;
+                                  String userId = user!.uid;
+                                  FirebaseDatabase.instance
+                                      .ref()
+                                      .child("user_id: $userId")
+                                      .child("to-do_lists")
+                                      .push()
+                                      .set({
+                                    "item_name": _toDoItemController.text,
+                                  });
+                                  Navigator.of(context).pop();
+
+                                },
+                              ),
+                              TextButton(
+                                child: Text("Cancel"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+
+                                },
+                              )
+                            ],
+
+                          );
+                        }
+
+                      );
+                    },
+                  )
+                ],
+              )
+            )
+
+          ],
+
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
