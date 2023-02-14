@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:habit_tracker_plp/helpers/create_habit.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:habit_tracker_plp/helpers/todo.dart';
 import '../helpers/habit_progressbar.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseDatabase database = FirebaseDatabase.instance;
   List<Habit> _habits = [];
-  List<ToDoItem> _toDoItems = [];
+  List<ToDo> _toDoItems = [];
   final _textController = TextEditingController();
   final _toDoItemController = TextEditingController();
   final _dueDateController = TextEditingController();
@@ -48,6 +48,23 @@ class _HomePageState extends State<HomePage> {
         print(habitStrings);
       }
     });
+
+    database
+      .ref()
+      .child("user_id: ${userId}")
+      .child("to-do_lists")
+      .onValue
+      .listen((event) {
+        Map<dynamic, dynamic>? todoItems = event.snapshot.value as Map?;
+        if (todoItems != null){
+          List<ToDo> todoList = [];
+          todoItems.forEach((key,value){
+            todoList.add(ToDo.fromMap({...value, "name":key}));
+          });
+        }
+
+    });
+
   }
 
   static const List<Widget> _pages = <Widget>[
@@ -190,10 +207,11 @@ class _HomePageState extends State<HomePage> {
                       child: ListView.builder(
                         itemCount: _toDoItems.length,
                         itemBuilder: (context, index){
-                          return CheckboxListTile(value: _toDoItems[index].isChecked, onChanged: (value) {
+                          return CheckboxListTile(value: _toDoItems[index].isDone, onChanged: (value) {
                             setState(() {
-                              _toDoItems[index].isChecked = value!;
+                              _toDoItems[index].name = value! as String;
                             });
+                            print(_toDoItems);
 
                           });
                         },
@@ -343,10 +361,3 @@ class Habit {
 }
 
 
-class ToDoItem {
-  String itemName;
-  bool isChecked;
-  DateTime dueDate;
-
-  ToDoItem({required this.itemName, required this.isChecked, required this.dueDate});
-}
