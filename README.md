@@ -1,17 +1,25 @@
-# habit_tracker_plp
+### Market Fit
+Market Fit:
 
-A new Flutter project.
+Target Audience: Your target audience for the habit tracker app will likely be individuals who are interested in self-improvement and personal development. This includes people who are interested in fitness, productivity, mental health, and overall wellness.
 
-## Getting Started
+Competitors: There are already several habit tracking apps available in the market such as Habitify, Habitica, Strides, and Streaks. It's important to study these apps and understand what features they offer and what gaps you can fill.
 
-This project is a starting point for a Flutter application.
+Unique Selling Point: Your habit tracker app needs to have a unique selling point that sets it apart from the competition. This could be a specific feature or a different approach to habit tracking.
 
-A few resources to get you started if this is your first Flutter project:
+### Risks
+- Development costs
+- Marketing
+- Market saturation
+- Complexity of the project
+- User Engagement: The amount of time in which a user uses the app.
+- Data Security: Just guaranatee that the user data is safe and secure.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+1. Habit Tracking: A user should be able to map out their habits (things they want to achieve)
+2. Streaks: The count of how many times a task or habit is completed
+3. Share my progress: Integration with other social media platforms
+4. Rewards
+5. Authentication: Login and Sign Up
+6. Basic analytics: How many tasks are completed, what is the frequency.
